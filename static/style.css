@@ -1,0 +1,54 @@
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.hidden {
+    display: none;
+}
+
+.error-message {
+    color: red;
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid red;
+    border-radius: 4px;
+}
+
+#loading {
+    color: #666;
+    margin-top: 10px;
+    padding: 10px;
+    text-align: center;
+}
+
+input, select, button {
+    padding: 8px;
+    margin: 5px 0;
+    width: 100%;
+    max-width: 300px;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+#results {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}

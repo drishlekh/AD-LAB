@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Price Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Stock Price Prediction</h1>
+        <form id="predictionForm">
+            <div class="form-group">
+                <label for="date">Select Date:</label>
+                <input type="date" id="date" name="date" 
+                       min="{{ min_date }}" max="{{ max_date }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="model_type">Select Model:</label>
+                <select id="model_type" name="model_type" required>
+                    <option value="lstm">LSTM Model</option>
+                    <option value="linear">Linear Regression Model</option>
+                </select>
+            </div>
+
+            <button type="submit">Predict</button>
+        </form>
+
+        <div id="results" class="hidden">
+            <h2>Results:</h2>
+            <p>Predicted Price: $<span id="predicted_price">-</span></p>
+            <p>Actual Price: $<span id="actual_price">-</span></p>
+        </div>
+        <div id="error" class="hidden error-message"></div>
+        <div id="loading" class="hidden">Making prediction...</div>
+    </div>
+
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            document.getElementById('results').classList.add('hidden');
+            document.getElementById('error').classList.add('hidden');
+            document.getElementById('loading').classList.remove('hidden');
+            
+            const formData = new FormData(e.target);
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                document.getElementById('loading').classList.add('hidden');
+                
+                if (data.error) {
+                    document.getElementById('error').textContent = data.error;
+                    document.getElementById('error').classList.remove('hidden');
+                } else {
+                    document.getElementById('predicted_price').textContent = data.predicted_price;
+                    document.getElementById('actual_price').textContent = data.actual_price;
+                    document.getElementById('results').classList.remove('hidden');
+                }
+            } catch (error) {
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('error').textContent = 'An error occurred during prediction';
+                document.getElementById('error').classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
