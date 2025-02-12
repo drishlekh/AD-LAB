@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Q&A System</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #34495e;
+            font-weight: bold;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:disabled {
+            background-color: #bdc3c7;
+        }
+        #response {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 6px;
+            background-color: #f8f9fa;
+            min-height: 100px;
+        }
+        .loading {
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Website Content Q&A System</h1>
+
+        <div class="input-group">
+            <label for="url">Website URL:</label>
+            <input type="text" id="url" placeholder="Enter website URL (e.g., https://example.com)">
+        </div>
+
+        <div class="input-group">
+            <label for="question">Your Question:</label>
+            <textarea id="question" rows="3" placeholder="Ask a question about the website content"></textarea>
+        </div>
+
+        <button onclick="processQuestion()" id="submitBtn">Get Answer</button>
+
+        <div class="loading" id="loading">Processing your request...</div>
+
+        <div id="response"></div>
+    </div>
+
+    <script>
+        async function processQuestion() {
+            const url = document.getElementById('url').value;
+            const question = document.getElementById('question').value;
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+            const responseDiv = document.getElementById('response');
+
+            if (!url || !question) {
+                alert('Please enter both URL and question');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            loading.style.display = 'block';
+            responseDiv.innerHTML = '';
+
+            try {
+                const response = await fetch('/process', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url, question })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    responseDiv.innerHTML = `<p style="color: red;">Error: ${data.error}</p>`;
+                } else {
+                    responseDiv.innerHTML = `<p>${data.response}</p>`;
+                }
+            } catch (error) {
+                responseDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            } finally {
+                submitBtn.disabled = false;
+                loading.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
